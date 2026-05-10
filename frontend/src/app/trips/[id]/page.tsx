@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
 
 // Mock data based on the backend TripOut schema
@@ -37,6 +38,8 @@ function formatDateRange(start: string, end: string) {
 }
 
 export default function TripDetailPage({ params }: { params: { id: string } }) {
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+
   // Use mock data for now
   const trip = MOCK_TRIP;
   const totalCost = trip.stops.reduce((acc, stop) => 
@@ -67,10 +70,16 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
               {trip.name}
             </h1>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link 
+              href={`/trips/${params.id}/build`}
+              className="bg-white text-black px-8 py-3 sans text-xs uppercase tracking-widest hover:bg-black hover:text-white border border-white transition text-center"
+            >
+              Design Experience
+            </Link>
             <Link 
               href={`/trips/${params.id}/edit`}
-              className="bg-white/10 backdrop-blur-md text-white px-8 py-3 sans text-xs uppercase tracking-widest hover:bg-white hover:text-black border border-white/20 transition"
+              className="bg-white/10 backdrop-blur-md text-white px-8 py-3 sans text-xs uppercase tracking-widest hover:bg-white hover:text-black border border-white/20 transition text-center"
             >
               Edit Journey
             </Link>
@@ -90,45 +99,95 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
             </p>
           </div>
 
-          <div className="space-y-16">
-            {trip.stops.map((stop) => (
-              <div key={stop.id}>
-                <div className="flex items-end gap-4 mb-8">
-                  <h3 className="serif text-4xl">{stop.city_name}</h3>
-                  <span className="sans text-[10px] uppercase tracking-[0.2em] text-gray-500 pb-1.5">{stop.country}</span>
-                </div>
-                
-                <div className="space-y-8 pl-4 md:pl-8 border-l border-black/10 dark:border-white/10">
-                  {stop.activities.map((activity) => (
-                    <div key={activity.id} className="relative">
-                      {/* Timeline Dot */}
-                      <div className="absolute -left-[21px] md:-left-[37px] top-1.5 w-2 h-2 rounded-full bg-accent"></div>
-                      
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                        <div>
-                          <p className="sans text-[10px] uppercase tracking-widest text-accent mb-1">
-                            Day {activity.day_number} &mdash; {activity.time_slot}
-                          </p>
-                          <h4 className="serif text-2xl mb-1">{activity.name}</h4>
-                          <span className="sans text-[10px] uppercase tracking-wider text-gray-500 bg-black/5 dark:bg-white/5 px-2 py-1 rounded-sm">
-                            {activity.cost_category}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <p className="sans text-sm tracking-wider">
-                            ${activity.estimated_cost.toFixed(2)}
-                          </p>
-                          <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mt-1">
-                            {activity.duration_minutes} MIN
-                          </p>
+          {/* View Toggle */}
+          <div className="flex justify-end mb-8">
+            <div className="inline-flex bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-1">
+              <button 
+                onClick={() => setViewMode('list')}
+                className={`px-6 py-2 sans text-[10px] uppercase tracking-widest transition ${viewMode === 'list' ? 'bg-black text-white dark:bg-white dark:text-black' : 'text-gray-500 hover:text-black dark:hover:text-white'}`}
+              >
+                List View
+              </button>
+              <button 
+                onClick={() => setViewMode('calendar')}
+                className={`px-6 py-2 sans text-[10px] uppercase tracking-widest transition ${viewMode === 'calendar' ? 'bg-black text-white dark:bg-white dark:text-black' : 'text-gray-500 hover:text-black dark:hover:text-white'}`}
+              >
+                Calendar View
+              </button>
+            </div>
+          </div>
+
+          {/* List View (Grouped by City) */}
+          {viewMode === 'list' && (
+            <div className="space-y-16">
+              {trip.stops.map((stop) => (
+                <div key={stop.id}>
+                  <div className="flex items-end gap-4 mb-8">
+                    <h3 className="serif text-4xl">{stop.city_name}</h3>
+                    <span className="sans text-[10px] uppercase tracking-[0.2em] text-gray-500 pb-1.5">{stop.country}</span>
+                  </div>
+                  
+                  <div className="space-y-8 pl-4 md:pl-8 border-l border-black/10 dark:border-white/10">
+                    {stop.activities.map((activity) => (
+                      <div key={activity.id} className="relative">
+                        <div className="absolute -left-[21px] md:-left-[37px] top-1.5 w-2 h-2 rounded-full bg-accent"></div>
+                        
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
+                          <div>
+                            <p className="sans text-[10px] uppercase tracking-widest text-accent mb-1">
+                              Day {activity.day_number} &mdash; {activity.time_slot}
+                            </p>
+                            <h4 className="serif text-2xl mb-1">{activity.name}</h4>
+                            <span className="sans text-[10px] uppercase tracking-wider text-gray-500 bg-black/5 dark:bg-white/5 px-2 py-1 rounded-sm">
+                              {activity.cost_category}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <p className="sans text-sm tracking-wider">
+                              ${activity.estimated_cost.toFixed(2)}
+                            </p>
+                            <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mt-1">
+                              {activity.duration_minutes} MIN
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {/* Calendar View (Grouped by Day) */}
+          {viewMode === 'calendar' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Array.from({ length: Math.max(...trip.stops.flatMap(s => s.activities.map(a => a.day_number)), 1) }, (_, i) => i + 1).map(day => {
+                const dayActivities = trip.stops.flatMap(s => s.activities.map(a => ({...a, stopName: s.city_name}))).filter(a => a.day_number === day).sort((a, b) => a.time_slot.localeCompare(b.time_slot));
+                
+                return (
+                  <div key={day} className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-6">
+                    <h3 className="sans text-[10px] uppercase tracking-widest text-gray-500 mb-6 pb-4 border-b border-black/10 dark:border-white/10">Day {day}</h3>
+                    
+                    {dayActivities.length === 0 ? (
+                      <p className="sans text-xs text-gray-400 italic">No activities planned.</p>
+                    ) : (
+                      <div className="space-y-6">
+                        {dayActivities.map(act => (
+                          <div key={act.id} className="relative pl-4 border-l-2 border-accent">
+                            <p className="sans text-[9px] uppercase tracking-widest text-gray-500 mb-1">{act.time_slot} &bull; {act.stopName}</p>
+                            <h4 className="serif text-lg leading-tight mb-1">{act.name}</h4>
+                            <p className="sans text-[10px] tracking-widest">${act.estimated_cost.toFixed(2)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
         </div>
 
         {/* Right Column: Budget & Meta */}

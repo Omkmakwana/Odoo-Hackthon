@@ -19,6 +19,9 @@ export default function Navbar() {
             <Link href="/search" className="hover:text-accent transition border-b border-transparent hover:border-accent pb-1">
               Destinations
             </Link>
+            <Link href="/activities" className="hover:text-accent transition border-b border-transparent hover:border-accent pb-1">
+              Activities
+            </Link>
           </div>
         </div>
         <div className="flex items-center gap-6">
