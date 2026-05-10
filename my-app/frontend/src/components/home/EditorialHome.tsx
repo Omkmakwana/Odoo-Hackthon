@@ -85,7 +85,7 @@ export default function EditorialHome() {
           <div className="grid grid-cols-2 gap-8 border-t border-black pt-6 sans text-xs uppercase tracking-widest">
             <div><span className="block text-gray-400 mb-1">Dates</span>12—19 Oct</div>
             <div><span className="block text-gray-400 mb-1">Pace</span>Leisurely</div>
-            <div><span className="block text-gray-400 mb-1">Budget</span>$2,400 <span className="lowercase normal-case">est.</span></div>
+            <div><span className="block text-gray-400 mb-1">Budget</span>₹1,99,200 <span className="lowercase normal-case">est.</span></div>
             <div>
               <Link href="/trips/new" className="bg-black text-white hover:bg-accent border border-black hover:border-accent px-4 py-3 transition w-full block text-center">
                 Edit Trip

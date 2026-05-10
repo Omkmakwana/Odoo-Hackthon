@@ -206,7 +206,7 @@ export default function BuildItineraryPage({ params }: { params: { id: string } 
                   
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <p className="sans text-sm tracking-wider">${activity.estimated_cost.toFixed(2)}</p>
+                      <p className="sans text-sm tracking-wider">₹{(activity.estimated_cost * 83).toLocaleString('en-IN')}</p>
                       <p className="sans text-[9px] uppercase tracking-widest text-gray-500 mt-1">{activity.duration_minutes} MIN | {activity.cost_category}</p>
                     </div>
                     <button onClick={() => deleteActivity(stop.id, activity.id)} className="text-gray-400 hover:text-red-500 transition opacity-0 group-hover/activity:opacity-100">
@@ -241,7 +241,7 @@ export default function BuildItineraryPage({ params }: { params: { id: string } 
                       <input required type="number" min="1" value={newActivity.duration_minutes} onChange={e => setNewActivity({...newActivity, duration_minutes: parseInt(e.target.value)})} className="w-full border-b border-black bg-transparent py-2 sans text-xs outline-none focus:border-accent transition" />
                     </div>
                     <div>
-                      <label className="sans text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Est. Cost ($)</label>
+                      <label className="sans text-[9px] uppercase tracking-widest text-gray-500 block mb-2">Est. Cost (₹)</label>
                       <input required type="number" min="0" step="0.01" value={newActivity.estimated_cost} onChange={e => setNewActivity({...newActivity, estimated_cost: parseFloat(e.target.value)})} className="w-full border-b border-black bg-transparent py-2 sans text-xs outline-none focus:border-accent transition" />
                     </div>
                     <div className="col-span-2">
