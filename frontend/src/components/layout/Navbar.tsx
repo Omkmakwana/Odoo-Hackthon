@@ -11,7 +11,7 @@ export default function Navbar() {
           </Link>
           <div className="hidden md:flex gap-8 text-gray-500">
             <Link href="/dashboard" className="hover:text-accent transition border-b border-transparent hover:border-accent pb-1 text-black">
-              Overview
+              Dashboard
             </Link>
             <Link href="/trips" className="hover:text-accent transition border-b border-transparent hover:border-accent pb-1">
               Itineraries
