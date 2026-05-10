@@ -2,6 +2,7 @@
 
 import asyncio
 import sys
+from datetime import date
 from pathlib import Path
 
 # Ensure project root is on sys.path
@@ -81,28 +82,40 @@ async def seed():
         # ── Activities ───────────────────────────────────────────────────
         activities_data = [
             {"name": "Visit Fushimi Inari Shrine", "city_id": cities[0].id, "category": "sightseeing", "estimated_cost": 0, "duration_minutes": 120,
+             "image_url": "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?q=80&w=800",
              "description": "Walk through thousands of vermillion torii gates on the mountain trail."},
             {"name": "Tea Ceremony Experience", "city_id": cities[0].id, "category": "culture", "estimated_cost": 45, "duration_minutes": 90,
+             "image_url": "https://images.unsplash.com/photo-1545048702-79362596cdc9?q=80&w=800",
              "description": "Traditional matcha preparation in a historic tea house."},
             {"name": "Eiffel Tower Visit", "city_id": cities[1].id, "category": "sightseeing", "estimated_cost": 26, "duration_minutes": 120,
+             "image_url": "https://images.unsplash.com/photo-1511739001486-6bfe10ce65f4?q=80&w=800",
              "description": "Ascend the iconic iron lattice tower for panoramic views of Paris."},
             {"name": "Louvre Museum", "city_id": cities[1].id, "category": "culture", "estimated_cost": 17, "duration_minutes": 240,
+             "image_url": "https://images.unsplash.com/photo-1499426600726-7f5b8b39ed32?q=80&w=800",
              "description": "Home to the Mona Lisa and 35,000 other works of art."},
             {"name": "Tsukiji Outer Market Food Tour", "city_id": cities[2].id, "category": "food", "estimated_cost": 80, "duration_minutes": 180,
+             "image_url": "https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=800",
              "description": "Sample fresh sushi, tamagoyaki, and street food at Tokyo's legendary fish market."},
             {"name": "Colosseum Guided Tour", "city_id": cities[3].id, "category": "sightseeing", "estimated_cost": 35, "duration_minutes": 150,
+             "image_url": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=800",
              "description": "Explore the ancient amphitheater that once hosted gladiatorial games."},
             {"name": "Pyramids of Giza Tour", "city_id": cities[4].id, "category": "sightseeing", "estimated_cost": 20, "duration_minutes": 240,
+             "image_url": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=800",
              "description": "Stand before the last surviving Ancient Wonder of the World."},
             {"name": "Broadway Show", "city_id": cities[5].id, "category": "culture", "estimated_cost": 150, "duration_minutes": 180,
+             "image_url": "https://images.unsplash.com/photo-1520019032281-1e2eda01e08c?q=80&w=800",
              "description": "Catch a world-class performance in the Theater District."},
             {"name": "Gondola Ride", "city_id": cities[6].id, "category": "sightseeing", "estimated_cost": 80, "duration_minutes": 30,
+             "image_url": "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?q=80&w=800",
              "description": "Glide through Venice's canals in a traditional gondola."},
             {"name": "Northern Lights Tour", "city_id": cities[7].id, "category": "adventure", "estimated_cost": 120, "duration_minutes": 300,
+             "image_url": "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=800",
              "description": "Chase the aurora borealis across Iceland's dark skies."},
             {"name": "Sagrada Família Visit", "city_id": cities[8].id, "category": "sightseeing", "estimated_cost": 26, "duration_minutes": 120,
+             "image_url": "https://images.unsplash.com/photo-1583779457094-ab6f2bc5849b?q=80&w=800",
              "description": "Marvel at Gaudí's unfinished basilica, a UNESCO World Heritage Site."},
             {"name": "Ubud Rice Terrace Walk", "city_id": cities[9].id, "category": "adventure", "estimated_cost": 5, "duration_minutes": 120,
+             "image_url": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800",
              "description": "Stroll through the emerald-green Tegallalang rice paddies."},
         ]
         for ad in activities_data:
@@ -116,8 +129,8 @@ async def seed():
             name="The Kyoto Chronicles",
             description="A seven day exploration through the ancient capital.",
             cover_url="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800",
-            start_date="2026-10-12",
-            end_date="2026-10-19",
+            start_date=date(2026, 10, 12),
+            end_date=date(2026, 10, 19),
             status="upcoming",
             is_public=True,
             budget_limit=2400.0,
@@ -126,9 +139,9 @@ async def seed():
         await db.flush()
 
         stop1 = Stop(trip_id=trip1.id, city_id=cities[0].id, city_name="Kyoto", country="Japan",
-                      arrival_date="2026-10-12", departure_date="2026-10-15", order=0)
+                      arrival_date=date(2026, 10, 12), departure_date=date(2026, 10, 15), order=0)
         stop2 = Stop(trip_id=trip1.id, city_id=cities[2].id, city_name="Tokyo", country="Japan",
-                      arrival_date="2026-10-15", departure_date="2026-10-19", order=1)
+                      arrival_date=date(2026, 10, 15), departure_date=date(2026, 10, 19), order=1)
         db.add_all([stop1, stop2])
         await db.flush()
 
@@ -167,8 +180,8 @@ async def seed():
             name="Parisian Winter",
             description="Four magical days in the city of light during the holiday season.",
             cover_url="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=800",
-            start_date="2026-11-22",
-            end_date="2026-11-26",
+            start_date=date(2026, 11, 22),
+            end_date=date(2026, 11, 26),
             status="draft",
             is_public=False,
             budget_limit=1800.0,
@@ -177,7 +190,7 @@ async def seed():
         await db.flush()
 
         stop_paris = Stop(trip_id=trip2.id, city_id=cities[1].id, city_name="Paris", country="France",
-                          arrival_date="2026-11-22", departure_date="2026-11-26", order=0)
+                          arrival_date=date(2026, 11, 22), departure_date=date(2026, 11, 26), order=0)
         db.add(stop_paris)
         await db.flush()
 

@@ -122,7 +122,7 @@ export default function DashboardPage() {
           {tripsLoading ? (
             <div className="h-12 w-32 bg-gray-200 dark:bg-gray-800 animate-pulse"></div>
           ) : (
-            <p className="serif text-4xl md:text-5xl">${totalBudget.toLocaleString()}</p>
+            <p className="serif text-4xl md:text-5xl">₹{(totalBudget * 83).toLocaleString('en-IN')}</p>
           )}
         </div>
         <div className="bg-white dark:bg-black p-8">
@@ -130,7 +130,7 @@ export default function DashboardPage() {
           {tripsLoading ? (
             <div className="h-12 w-32 bg-gray-200 dark:bg-gray-800 animate-pulse"></div>
           ) : (
-            <p className="serif text-4xl md:text-5xl">${totalSpent.toLocaleString()}</p>
+            <p className="serif text-4xl md:text-5xl">₹{(totalSpent * 83).toLocaleString('en-IN')}</p>
           )}
         </div>
         <div className="bg-white dark:bg-black p-8 group hover:bg-black/5 dark:hover:bg-white/5 transition relative cursor-pointer">

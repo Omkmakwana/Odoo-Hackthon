@@ -165,7 +165,7 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                             </div>
                             <div className="text-right">
                               <p className="sans text-sm tracking-wider">
-                                ${activity.estimated_cost?.toFixed(2) || '0.00'}
+                                ₹{((activity.estimated_cost || 0) * 83).toLocaleString('en-IN')}
                               </p>
                               <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mt-1">
                                 {activity.duration_minutes} MIN
@@ -224,7 +224,7 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                     onClick={handleCopyLink}
                     className="bg-black text-white dark:bg-white dark:text-black px-4 py-2 sans text-[10px] uppercase tracking-widest hover:bg-accent dark:hover:bg-accent hover:text-white transition whitespace-nowrap"
                   >
-                    {linkCopied ? '✓' : 'Copy'}
+                    {linkCopied ? 'Copied' : 'Copy'}
                   </button>
                 </div>
                 <Link
@@ -243,12 +243,12 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
             <h3 className="sans text-[10px] uppercase tracking-widest text-gray-500 mb-6">Financial Overview</h3>
             <div className="space-y-6">
               <div>
-                <p className="serif text-4xl">${totalCost.toFixed(2)}</p>
+                <p className="serif text-4xl">₹{(totalCost * 83).toLocaleString('en-IN')}</p>
                 <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mt-1">Total Estimated Cost</p>
               </div>
               <div className="h-px w-full bg-black/10 dark:bg-white/10"></div>
               <div>
-                <p className="serif text-2xl">${trip.budget_limit.toFixed(2)}</p>
+                <p className="serif text-2xl">₹{(trip.budget_limit * 83).toLocaleString('en-IN')}</p>
                 <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mt-1">Budget Limit</p>
               </div>
               
@@ -264,6 +264,14 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                   {trip.budget_limit > 0 ? `${((totalCost / trip.budget_limit) * 100).toFixed(0)}% Allocated` : 'No budget set'}
                 </p>
               </div>
+
+              {/* Link to full budget page */}
+              <Link
+                href={`/trips/${params.id}/budget`}
+                className="block text-center border border-black/20 dark:border-white/20 px-4 py-2.5 sans text-[10px] uppercase tracking-widest hover:border-black dark:hover:border-white hover:text-accent transition mt-4"
+              >
+                View Full Breakdown →
+              </Link>
             </div>
           </div>
 

@@ -54,7 +54,7 @@ function formatDateRange(start: string | null, end: string | null): string {
 }
 
 function costIcon(cat: string): string {
-  const map: Record<string, string> = { transport: '✈', stay: '🏨', meal: '🍽', activity: '🎯' };
+  const map: Record<string, string> = { transport: 'TR', stay: 'ST', meal: 'ML', activity: 'AC' };
   return map[cat] || '•';
 }
 
@@ -192,7 +192,7 @@ export default function SharedItineraryPage() {
             {trip.total_cost > 0 && (
               <>
                 <span className="w-px h-3 bg-white/30 hidden sm:block"></span>
-                <span>Est. ${trip.total_cost.toLocaleString()}</span>
+                <span>Est. ₹{(trip.total_cost * 83).toLocaleString('en-IN')}</span>
               </>
             )}
           </div>
@@ -237,7 +237,7 @@ export default function SharedItineraryPage() {
               href="/trips"
               className="bg-accent text-white px-6 py-2.5 sans text-[10px] uppercase tracking-widest transition"
             >
-              ✓ View in My Trips
+              View in My Trips
             </Link>
           ) : (
             <button
@@ -313,7 +313,7 @@ export default function SharedItineraryPage() {
                           {stopCost > 0 && (
                             <>
                               <span className="w-px h-3 bg-gray-300 dark:bg-gray-600"></span>
-                              <span className="text-accent">${stopCost.toLocaleString()}</span>
+                              <span className="text-accent">₹{(stopCost * 83).toLocaleString('en-IN')}</span>
                             </>
                           )}
                         </div>
@@ -344,7 +344,7 @@ export default function SharedItineraryPage() {
                                 </div>
                                 <div className="flex-shrink-0 text-right">
                                   {act.estimated_cost > 0 && (
-                                    <p className="sans text-sm font-medium text-accent">${act.estimated_cost}</p>
+                                    <p className="sans text-sm font-medium text-accent">₹{(act.estimated_cost * 83).toLocaleString('en-IN')}</p>
                                   )}
                                   <p className="sans text-[9px] uppercase tracking-widest text-gray-400 mt-1">
                                     {act.duration_minutes}min
@@ -371,12 +371,12 @@ export default function SharedItineraryPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10">
               <div className="bg-white dark:bg-black p-8">
                 <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mb-3">Total Estimated</p>
-                <p className="serif text-3xl md:text-4xl">${trip.total_cost.toLocaleString()}</p>
+                <p className="serif text-3xl md:text-4xl">₹{(trip.total_cost * 83).toLocaleString('en-IN')}</p>
               </div>
               <div className="bg-white dark:bg-black p-8">
                 <p className="sans text-[10px] uppercase tracking-widest text-gray-500 mb-3">Budget Limit</p>
                 <p className="serif text-3xl md:text-4xl">
-                  {trip.budget_limit > 0 ? `$${trip.budget_limit.toLocaleString()}` : '—'}
+                  {trip.budget_limit > 0 ? `₹${(trip.budget_limit * 83).toLocaleString('en-IN')}` : '—'}
                 </p>
               </div>
               <div className="bg-white dark:bg-black p-8">
@@ -398,7 +398,7 @@ export default function SharedItineraryPage() {
               href="/trips"
               className="inline-block bg-accent text-white px-10 py-4 sans text-[10px] uppercase tracking-widest transition"
             >
-              ✓ Go to My Trips
+              Go to My Trips
             </Link>
           ) : (
             <button
