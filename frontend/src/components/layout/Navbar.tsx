@@ -23,18 +23,13 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-6">
           <ThemeToggle />
-          <Link href="/trips/new" className="hover:text-accent transition hidden sm:block">
-            Create +
-          </Link>
           <div className="w-px h-3 bg-gray-300 hidden sm:block"></div>
-          <button className="group flex items-center gap-3">
-            <span className="hidden sm:block group-hover:text-accent transition">J. Doe</span>
-            <img
-              src="https://i.pravatar.cc/150?u=traveloop"
-              alt="Profile"
-              className="w-7 h-7 rounded-full border border-black grayscale group-hover:grayscale-0 group-hover:border-accent object-cover transition duration-300"
-            />
-          </button>
+          <Link href="/login" className="hover:text-accent transition hidden sm:block">
+            Sign In
+          </Link>
+          <Link href="/register" className="bg-black text-white hover:bg-accent border border-black hover:border-accent px-4 py-2 transition text-center hidden sm:block">
+            Sign Up
+          </Link>
         </div>
       </nav>
     </header>

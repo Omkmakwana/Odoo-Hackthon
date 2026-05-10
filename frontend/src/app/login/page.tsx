@@ -3,21 +3,15 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function RegisterPage() {
-  const [fullName, setFullName] = useState('');
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Passwords do not match.');
-      return;
-    }
     // TODO: integrate with backend auth
-    console.log('Register attempt:', { fullName, email, password });
+    console.log('Login attempt:', { email, password });
   };
 
   return (
@@ -26,38 +20,22 @@ export default function RegisterPage() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="serif text-5xl md:text-6xl mb-4">Begin Your<br /><i className="text-gray-400">Story.</i></h1>
+          <h1 className="serif text-5xl md:text-6xl mb-4">Welcome<br /><i className="text-gray-400">Back.</i></h1>
           <p className="sans text-xs uppercase tracking-widest text-gray-500">
-            Create an account to start planning
+            Sign in to continue your journey
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Full Name */}
-          <div>
-            <label htmlFor="register-name" className="sans text-[10px] uppercase tracking-widest text-gray-500 block mb-2">
-              Full Name
-            </label>
-            <input
-              id="register-name"
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Jane Doe"
-              required
-              className="w-full border-b border-black bg-transparent py-3 sans text-sm outline-none placeholder:text-gray-400 focus:border-accent transition"
-            />
-          </div>
-
           {/* Email */}
           <div>
-            <label htmlFor="register-email" className="sans text-[10px] uppercase tracking-widest text-gray-500 block mb-2">
+            <label htmlFor="login-email" className="sans text-[10px] uppercase tracking-widest text-gray-500 block mb-2">
               Email Address
             </label>
             <input
-              id="register-email"
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -69,18 +47,17 @@ export default function RegisterPage() {
 
           {/* Password */}
           <div>
-            <label htmlFor="register-password" className="sans text-[10px] uppercase tracking-widest text-gray-500 block mb-2">
+            <label htmlFor="login-password" className="sans text-[10px] uppercase tracking-widest text-gray-500 block mb-2">
               Password
             </label>
             <div className="relative">
               <input
-                id="register-password"
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                minLength={8}
                 className="w-full border-b border-black bg-transparent py-3 sans text-sm outline-none placeholder:text-gray-400 focus:border-accent transition pr-12"
               />
               <button
@@ -93,37 +70,11 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label htmlFor="register-confirm" className="sans text-[10px] uppercase tracking-widest text-gray-500 block mb-2">
-              Confirm Password
-            </label>
-            <input
-              id="register-confirm"
-              type={showPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              minLength={8}
-              className="w-full border-b border-black bg-transparent py-3 sans text-sm outline-none placeholder:text-gray-400 focus:border-accent transition"
-            />
-          </div>
-
-          {/* Terms */}
-          <div className="flex items-start gap-3 pt-2">
-            <input
-              id="register-terms"
-              type="checkbox"
-              required
-              className="mt-1 accent-accent"
-            />
-            <label htmlFor="register-terms" className="sans text-[11px] text-gray-500 leading-relaxed">
-              I agree to the{' '}
-              <a href="#" className="text-black hover:text-accent transition border-b border-transparent hover:border-accent">Terms of Service</a>
-              {' '}and{' '}
-              <a href="#" className="text-black hover:text-accent transition border-b border-transparent hover:border-accent">Privacy Policy</a>
-            </label>
+          {/* Forgot password */}
+          <div className="flex justify-end">
+            <button type="button" className="sans text-[10px] uppercase tracking-widest text-gray-400 hover:text-accent transition">
+              Forgot Password?
+            </button>
           </div>
 
           {/* Submit */}
@@ -131,7 +82,7 @@ export default function RegisterPage() {
             type="submit"
             className="w-full bg-black text-white hover:bg-accent border border-black hover:border-accent py-4 sans text-xs uppercase tracking-widest transition"
           >
-            Create Account
+            Sign In
           </button>
         </form>
 
@@ -142,7 +93,7 @@ export default function RegisterPage() {
           <div className="flex-1 h-px bg-gray-300"></div>
         </div>
 
-        {/* Social signup */}
+        {/* Social login buttons */}
         <div className="space-y-3">
           <button className="w-full border border-black py-3 flex items-center justify-center gap-3 sans text-xs uppercase tracking-widest hover:border-accent hover:text-accent transition group">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -155,11 +106,11 @@ export default function RegisterPage() {
           </button>
         </div>
 
-        {/* Login link */}
+        {/* Sign up link */}
         <p className="text-center mt-10 sans text-xs text-gray-500">
-          Already have an account?{' '}
-          <Link href="/login" className="text-black hover:text-accent transition uppercase tracking-widest border-b border-transparent hover:border-accent pb-px">
-            Sign In
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="text-black hover:text-accent transition uppercase tracking-widest border-b border-transparent hover:border-accent pb-px">
+            Create One
           </Link>
         </p>
 
