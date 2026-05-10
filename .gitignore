@@ -5,10 +5,12 @@ frontend/.env.local
 
 # Backend
 backend/venv/
-backend/__pycache__/
-backend/*.pyc
+**/__pycache__/
+*.pyc
 backend/.env
 backend/db.sqlite3
+backend/traveloop.db
+*.db
 
 # General
 .DS_Store
