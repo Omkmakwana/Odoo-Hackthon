@@ -1,6 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { Plus, Map, PackageCheck, NotebookPen, ArrowRight } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const recentTrips = [
   { id: '1', name: 'The Rome Chronicles', destination: 'Rome, Italy', dates: '12–19 Oct', status: 'ongoing', image: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800' },
@@ -15,6 +18,9 @@ const today = new Date().toLocaleDateString('en-US', {
 });
 
 export default function DashboardPage() {
+  const { user, loading } = useAuth();
+  const displayName = user ? user.full_name.split(' ')[0] : 'Traveler';
+
   return (
     <div className="min-h-[calc(100vh-65px)] max-w-7xl mx-auto px-6 py-12 md:py-20">
       
@@ -24,7 +30,11 @@ export default function DashboardPage() {
           <p className="sans text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-4">{today}</p>
           <h1 className="serif text-5xl md:text-7xl leading-[0.95]">
             Welcome back,<br />
-            <span className="text-gray-400 dark:text-gray-500">J. Doe.</span>
+            {loading ? (
+              <span className="inline-block w-64 h-12 bg-gray-200 dark:bg-gray-800 animate-pulse mt-2"></span>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-500">{displayName}.</span>
+            )}
           </h1>
         </div>
         <Link

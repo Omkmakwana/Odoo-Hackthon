@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Cormorant_Garamond, Montserrat } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import AuthWrapper from '@/components/shared/AuthWrapper';
 import '@/app/globals.css';
 
 const serif = Cormorant_Garamond({
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${serif.variable} ${sans.variable} min-h-screen flex flex-col relative`}>
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <AuthWrapper>
+          <Navbar />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </AuthWrapper>
       </body>
     </html>
   );

@@ -1,16 +1,61 @@
-import { createContext, useContext } from 'react';
+"use client";
 
-type AuthContextValue = {
-  user: null;
-  isAuthenticated: boolean;
-};
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
+import { getAccessToken, clearTokens, getMe, UserProfile } from "@/lib/api";
 
-const AuthContext = createContext<AuthContextValue>({ user: null, isAuthenticated: false });
-
-export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <AuthContext.Provider value={{ user: null, isAuthenticated: false }}>{children}</AuthContext.Provider>;
+interface AuthState {
+  user: UserProfile | null;
+  loading: boolean;
+  logout: () => void;
+  refresh: () => Promise<void>;
 }
 
-export function useAuthContext() {
+const AuthContext = createContext<AuthState>({
+  user: null,
+  loading: true,
+  logout: () => {},
+  refresh: async () => {},
+});
+
+export function useAuth() {
   return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUser = useCallback(async () => {
+    const token = getAccessToken();
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+    try {
+      const me = await getMe();
+      setUser(me);
+    } catch {
+      clearTokens();
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const logout = useCallback(() => {
+    clearTokens();
+    setUser(null);
+    window.location.href = "/login";
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ user, loading, logout, refresh: fetchUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

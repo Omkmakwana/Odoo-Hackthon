@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     app_name: str = "Traveloop API"
     debug: bool = False
     api_base_url: str = "http://localhost:8000"
-    cors_origins: list[str] = ["http://localhost:3000"]
+    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3001"]
 
     # ── Database ─────────────────────────────────────────────────────────
     database_url: str = "postgresql+asyncpg://traveloop:traveloop@localhost:5432/traveloop"

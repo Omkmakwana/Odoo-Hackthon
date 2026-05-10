@@ -1,31 +1,33 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { Camera, Pencil, X, Trash2 } from 'lucide-react';
-
-const user = {
-  name: 'J. Doe',
-  email: 'j.doe@traveloop.com',
-  phone: '+91 98765 43210',
-  city: 'Ahmedabad',
-  country: 'India',
-  language: 'English',
-  savedDestinations: ['Rome', 'Paris', 'Kyoto', 'Reykjavík', 'New York']
-};
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfilePage() {
+  const { user, loading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [language, setLanguage] = useState(user.language);
-  const [savedDestinations, setSavedDestinations] = useState(user.savedDestinations);
+  const [language, setLanguage] = useState('English');
+  const [savedDestinations, setSavedDestinations] = useState(['Rome', 'Paris', 'Kyoto', 'Reykjavík', 'New York']);
   const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    city: user.city,
-    country: user.country
+    name: '',
+    email: '',
+    phone: '+91 98765 43210',
+    city: 'Ahmedabad',
+    country: 'India'
   });
+
+  // Sync form data when user loads
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.full_name,
+        email: user.email
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -37,11 +39,11 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     setFormData({
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      city: user.city,
-      country: user.country
+      name: user?.full_name ?? '',
+      email: user?.email ?? '',
+      phone: formData.phone,
+      city: formData.city,
+      country: formData.country
     });
     setIsEditing(false);
   };
@@ -49,6 +51,26 @@ export default function ProfilePage() {
   const handleRemoveDestination = (dest: string) => {
     setSavedDestinations((prev) => prev.filter((d) => d !== dest));
   };
+
+  const initials = formData.name
+    ? formData.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : '';
+
+  if (loading) {
+    return (
+      <main className="w-full px-4 md:px-12 py-12 bg-[var(--background)] text-[var(--foreground)]">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="mb-12 pb-6 border-b border-[var(--border)]">
+            <div className="w-48 h-12 bg-gray-200 animate-pulse"></div>
+          </div>
+          <div className="mb-12 text-center">
+            <div className="mx-auto mb-4 w-28 h-28 rounded-full bg-gray-200 animate-pulse"></div>
+            <div className="mx-auto w-32 h-6 bg-gray-200 animate-pulse mt-6"></div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="w-full px-4 md:px-12 py-12 bg-[var(--background)] text-[var(--foreground)]">
@@ -63,13 +85,8 @@ export default function ProfilePage() {
 
         {/* Avatar Section */}
         <div className="mb-12 text-center">
-          <div className="mx-auto mb-4 w-28 h-28 relative">
-            <Image
-              src="https://i.pravatar.cc/150?u=traveloop"
-              alt="Avatar"
-              fill
-              className="rounded-full object-cover"
-            />
+          <div className="mx-auto mb-4 w-28 h-28 rounded-full bg-black text-white flex items-center justify-center text-3xl font-bold font-sans">
+            {initials}
           </div>
           <button className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--card-bg)] transition duration-200 font-sans text-sm uppercase tracking-widest">
             <Camera size={16} />

@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { register, saveTokens } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 
 const destinations = [
   {
@@ -25,6 +28,8 @@ const destinations = [
 ];
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { refresh } = useAuth();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,6 +37,8 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [currentDest, setCurrentDest] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,13 +50,30 @@ export default function RegisterPage() {
 
   const dest = destinations[currentDest];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
     if (password !== confirmPassword) {
-      alert('Passwords do not match.');
+      setError('Passwords do not match.');
       return;
     }
-    console.log('Register attempt:', { fullName, email, password });
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const tokens = await register(fullName, email, password);
+      saveTokens(tokens.access_token, tokens.refresh_token);
+      await refresh();
+      router.push('/dashboard');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,7 +81,6 @@ export default function RegisterPage() {
 
       {/* ── Left: Destination Image ── */}
       <div className="hidden lg:block lg:w-[50%] relative overflow-hidden">
-        {/* Image */}
         <img
           key={currentDest}
           src={dest.image}
@@ -67,18 +90,12 @@ export default function RegisterPage() {
             imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
           }`}
         />
-
-        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/70"></div>
-
-        {/* Top branding */}
         <div className="absolute top-8 left-12">
           <p className="sans text-[10px] uppercase tracking-[0.3em] text-white/40">
             Your journey begins here
           </p>
         </div>
-
-        {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
           <p
             className="sans text-[10px] uppercase tracking-[0.3em] text-white/50 mb-4 transition-opacity duration-1000"
@@ -102,8 +119,6 @@ export default function RegisterPage() {
             {dest.country}
           </p>
         </div>
-
-        {/* Bottom progress */}
         <div className="absolute bottom-8 left-12 right-12 flex items-center justify-between">
           <div className="flex gap-3">
             {destinations.map((d, i) => (
@@ -139,6 +154,13 @@ export default function RegisterPage() {
               <i className="text-gray-400">Story.</i>
             </h1>
           </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mb-6 px-4 py-3 border border-red-300 bg-red-50 sans text-xs text-red-700">
+              {error}
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -226,9 +248,10 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full bg-black text-white hover:bg-accent border border-black hover:border-accent py-4 sans text-xs uppercase tracking-widest transition"
+              disabled={loading}
+              className="w-full bg-black text-white hover:bg-accent border border-black hover:border-accent py-4 sans text-xs uppercase tracking-widest transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Account
+              {loading ? 'Creating account…' : 'Create Account'}
             </button>
           </form>
 

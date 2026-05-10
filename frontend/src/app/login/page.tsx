@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { login, saveTokens } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 
 const destinations = [
   {
@@ -25,11 +28,15 @@ const destinations = [
 ];
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { refresh } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [currentDest, setCurrentDest] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,9 +48,20 @@ export default function LoginPage() {
 
   const dest = destinations[currentDest];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
+    setError('');
+    setLoading(true);
+    try {
+      const tokens = await login(email, password);
+      saveTokens(tokens.access_token, tokens.refresh_token);
+      await refresh();
+      router.push('/dashboard');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,6 +80,13 @@ export default function LoginPage() {
               <i className="text-gray-400">Chapter.</i>
             </h1>
           </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mb-6 px-4 py-3 border border-red-300 bg-red-50 sans text-xs text-red-700">
+              {error}
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -111,9 +136,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-black text-white hover:bg-accent border border-black hover:border-accent py-4 sans text-xs uppercase tracking-widest transition"
+              disabled={loading}
+              className="w-full bg-black text-white hover:bg-accent border border-black hover:border-accent py-4 sans text-xs uppercase tracking-widest transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
 
@@ -147,7 +173,6 @@ export default function LoginPage() {
 
       {/* ── Right: Destination Image ── */}
       <div className="hidden lg:block lg:w-[55%] relative overflow-hidden">
-        {/* Image */}
         <img
           key={currentDest}
           src={dest.image}
@@ -157,20 +182,13 @@ export default function LoginPage() {
             imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
           }`}
         />
-
-        {/* Dark overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40"></div>
-
-        {/* Top corner label */}
         <div className="absolute top-8 right-8 text-right">
           <p className="sans text-[10px] uppercase tracking-[0.3em] text-white/50">
             {String(currentDest + 1).padStart(2, '0')} / {String(destinations.length).padStart(2, '0')}
           </p>
         </div>
-
-        {/* Bottom content */}
         <div className="absolute bottom-0 left-0 right-0 p-12">
-          {/* Quote */}
           <p
             key={`quote-${currentDest}`}
             className="sans text-xs uppercase tracking-[0.2em] text-white/60 mb-4 transition-opacity duration-1000"
@@ -178,7 +196,6 @@ export default function LoginPage() {
           >
             &ldquo;{dest.quote}&rdquo;
           </p>
-          {/* City name */}
           <h2
             key={`city-${currentDest}`}
             className="serif text-7xl md:text-8xl text-white leading-none mb-3 transition-all duration-1000"
@@ -195,8 +212,6 @@ export default function LoginPage() {
           >
             {dest.country}
           </p>
-
-          {/* Progress dots */}
           <div className="flex gap-2 mt-8">
             {destinations.map((_, i) => (
               <div
