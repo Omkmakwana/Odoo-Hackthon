@@ -31,7 +31,7 @@ const MOCK_ACTIVITIES: Activity[] = [
     category: 'Food',
     cost: '$$$',
     duration: '< 2 hours',
-    image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32d7?w=800',
+    image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800',
     description: 'Learn the ancient art of making fresh pasta from scratch with a local Roman chef.'
   },
   {
@@ -41,7 +41,7 @@ const MOCK_ACTIVITIES: Activity[] = [
     category: 'Culture',
     cost: '$$$',
     duration: 'Half-day',
-    image: 'https://images.unsplash.com/photo-1531572753322-ad011ceef8f2?w=800',
+    image: 'https://images.unsplash.com/photo-1525874684015-58379d421a52?w=800',
     description: 'Enter the Sistine Chapel before the crowds arrive and experience Michelangelo’s masterpiece in peace.'
   },
   {
@@ -82,6 +82,9 @@ export default function ActivitySearchPage() {
   const [selectedCost, setSelectedCost] = useState<string>('All');
   const [selectedDuration, setSelectedDuration] = useState<string>('All');
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
+  const [imageFallbackMap, setImageFallbackMap] = useState<Record<string, boolean>>({});
+
+  const fallbackActivityImage = 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800';
 
   // Filter logic
   const filteredActivities = MOCK_ACTIVITIES.filter(activity => {
@@ -202,8 +205,11 @@ export default function ActivitySearchPage() {
               {/* Image Section */}
               <div className="relative h-64 overflow-hidden w-full">
                 <img 
-                  src={activity.image} 
+                  src={imageFallbackMap[activity.id] ? fallbackActivityImage : activity.image}
                   alt={activity.title}
+                  onError={() => {
+                    setImageFallbackMap((previous) => ({ ...previous, [activity.id]: true }));
+                  }}
                   className="absolute inset-0 w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 group-hover:scale-105 transition duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-300"></div>

@@ -1,10 +1,30 @@
 "use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
+import { fetchApi } from '@/lib/api';
 
-// Mock Data
-const MOCK_CITIES = [
+type City = {
+  id: number;
+  name: string;
+  country: string;
+  region: string;
+  cost_index: string;
+  popularity: number;
+  image_url: string;
+};
+
+type CityApiResponse = {
+  id: number;
+  name: string;
+  country: string;
+  region: string;
+  cost_index: number;
+  popularity: number;
+  image_url: string | null;
+};
+
+const MOCK_CITIES: City[] = [
   { id: 1, name: 'Tokyo', country: 'Japan', region: 'Asia', cost_index: 'High', popularity: 98, image_url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2694&auto=format&fit=crop' },
   { id: 2, name: 'Florence', country: 'Italy', region: 'Europe', cost_index: 'Medium', popularity: 95, image_url: 'https://images.unsplash.com/photo-1543429776-27826315ef98?q=80&w=2670&auto=format&fit=crop' },
   { id: 3, name: 'Marrakech', country: 'Morocco', region: 'Africa', cost_index: 'Low', popularity: 88, image_url: 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=2671&auto=format&fit=crop' },
@@ -15,15 +35,76 @@ const MOCK_CITIES = [
 
 const REGIONS = ['All Regions', 'Asia', 'Europe', 'Africa', 'South America', 'North America', 'Oceania'];
 
+const FALLBACK_CITY_IMAGE =
+  'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=80';
+
+function mapCostIndex(value: number): string {
+  if (value <= 2) {
+    return 'Low';
+  }
+  if (value === 3) {
+    return 'Medium';
+  }
+  return 'High';
+}
+
 export default function CitySearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All Regions');
+  const [cities, setCities] = useState<City[]>(MOCK_CITIES);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [failedImageIds, setFailedImageIds] = useState<Record<number, true>>({});
 
-  const filteredCities = MOCK_CITIES.filter(city => {
+  useEffect(() => {
+    let active = true;
+
+    const loadCities = async () => {
+      try {
+        const data = (await fetchApi('/cities?limit=100')) as CityApiResponse[];
+        if (!active) {
+          return;
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+          setCities(
+            data.map((city) => ({
+              id: city.id,
+              name: city.name,
+              country: city.country,
+              region: city.region,
+              cost_index: mapCostIndex(city.cost_index),
+              popularity: city.popularity,
+              image_url: city.image_url || FALLBACK_CITY_IMAGE
+            }))
+          );
+          setLoadError(null);
+        } else {
+          setCities(MOCK_CITIES);
+        }
+      } catch {
+        if (active) {
+          setCities(MOCK_CITIES);
+          setLoadError('Showing offline demo data. Connect to the API for live catalog results.');
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadCities();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const filteredCities = useMemo(() => cities.filter(city => {
     const matchesSearch = city.name.toLowerCase().includes(searchQuery.toLowerCase()) || city.country.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRegion = selectedRegion === 'All Regions' || city.region === selectedRegion;
     return matchesSearch && matchesRegion;
-  });
+  }), [cities, searchQuery, selectedRegion]);
 
   return (
     <div className="min-h-[calc(100vh-65px)] pb-24">
@@ -70,6 +151,10 @@ export default function CitySearchPage() {
             </div>
           </div>
         </div>
+
+        {loadError ? (
+          <p className="mt-4 sans text-[10px] uppercase tracking-widest text-amber-600">{loadError}</p>
+        ) : null}
       </div>
 
       {/* Results Grid */}
@@ -80,7 +165,13 @@ export default function CitySearchPage() {
           </p>
         </div>
 
-        {filteredCities.length === 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="h-[390px] animate-pulse border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5" />
+            ))}
+          </div>
+        ) : filteredCities.length === 0 ? (
           <div className="py-24 text-center border-t border-black/10 dark:border-white/10 mt-8">
             <p className="serif text-2xl text-gray-400 mb-6">No destinations found matching your criteria.</p>
             <button 
@@ -97,9 +188,14 @@ export default function CitySearchPage() {
                 
                 {/* Image Header */}
                 <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={city.image_url} 
+                  <Image
+                    src={failedImageIds[city.id] ? FALLBACK_CITY_IMAGE : city.image_url}
                     alt={city.name} 
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    onError={() => {
+                      setFailedImageIds((previous) => ({ ...previous, [city.id]: true }));
+                    }}
                     className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 group-hover:scale-105 transition duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>

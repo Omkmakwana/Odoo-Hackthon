@@ -61,7 +61,7 @@ async def seed():
              "image_url": "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=800",
              "description": "Floating city of canals, gondolas, and Renaissance architecture."},
             {"name": "Reykjavík", "country": "Iceland", "region": "Europe", "cost_index": 5, "popularity": 72,
-             "image_url": "https://images.unsplash.com/photo-1513635269975-59693e0cd100?q=80&w=800",
+             "image_url": "https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=800",
              "description": "Gateway to Iceland's dramatic landscapes — geysers, waterfalls, and the Northern Lights."},
             {"name": "Barcelona", "country": "Spain", "region": "Europe", "cost_index": 3, "popularity": 91,
              "image_url": "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=800",

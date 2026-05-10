@@ -132,7 +132,7 @@ export default function EditorialHome() {
           {/* Card 2 */}
           <div className="group cursor-pointer">
             <div className="w-full h-64 bg-gray-200 mb-4 overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1513635269975-59693e0cd100?q=80&w=2070&auto=format&fit=crop" alt="Nordic Serenity" className="w-full h-full object-cover filter grayscale opacity-80 group-hover:scale-105 group-hover:opacity-100 transition duration-700" />
+              <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=2070&auto=format&fit=crop" alt="Nordic Serenity" className="w-full h-full object-cover filter grayscale opacity-80 group-hover:scale-105 group-hover:opacity-100 transition duration-700" />
             </div>
             <p className="sans text-[10px] uppercase tracking-widest text-gray-500 group-hover:text-accent transition mb-2">Dec 05 — Reykjavík, IS</p>
             <h4 className="serif text-2xl group-hover:italic group-hover:text-accent transition">Nordic Serenity</h4>
